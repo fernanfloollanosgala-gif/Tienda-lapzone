@@ -636,6 +636,244 @@
 
   .cart-empty-icon { font-size: 3rem; }
 
+  /* ── CHECKOUT MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .modal-overlay.open .modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    border-radius: 24px 24px 0 0;
+  }
+
+  .modal-head {
+    padding: 1.75rem 1.75rem 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .modal-head h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .modal-head p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .modal-body {
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .order-summary {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    font-size: 0.83rem;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .order-summary-title {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .order-line {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .order-total-line {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+    margin-top: 0.4rem;
+    padding-top: 0.6rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 0.95rem;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .form-field label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: 0.05em;
+  }
+
+  .form-field input,
+  .form-field textarea,
+  .form-field select {
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.92rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+
+  .form-field input:focus,
+  .form-field textarea:focus,
+  .form-field select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(168,255,62,0.1);
+  }
+
+  .form-field textarea {
+    resize: vertical;
+    min-height: 70px;
+  }
+
+  .submit-order-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #0d0d0d;
+    border: none;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .submit-order-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(168,255,62,0.35);
+  }
+
+  .submit-order-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Success screen */
+  .success-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 2rem;
+    gap: 1rem;
+  }
+
+  .success-screen.show { display: flex; animation: fadeUp 0.5s ease; }
+
+  .success-icon-big {
+    width: 80px; height: 80px;
+    background: rgba(168,255,62,0.12);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+    box-shadow: 0 0 40px rgba(168,255,62,0.2);
+    animation: pop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes pop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+
+  .success-screen h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .success-screen p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 300px;
+  }
+
+  .success-close-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.75rem 2rem;
+    border-radius: 999px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.2s;
+  }
+
+  .success-close-btn:hover { background: var(--surface3); }
+
   /* ── TOAST ── */
   .toast {
     position: fixed;
@@ -775,6 +1013,66 @@
       <strong id="cartTotal">S/ 0.00</strong>
     </div>
     <button class="checkout-btn" onclick="checkout()">Finalizar compra →</button>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal" id="modalBox">
+
+    <!-- Formulario -->
+    <div id="checkoutForm">
+      <div class="modal-head">
+        <div>
+          <h3>📦 Finalizar pedido</h3>
+          <p>Completa tus datos para coordinar el envío</p>
+        </div>
+        <button class="close-btn" onclick="closeCheckout()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Resumen del pedido -->
+        <div class="order-summary" id="orderSummary"></div>
+
+        <!-- Datos del cliente -->
+        <div class="form-field">
+          <label>👤 Nombre completo</label>
+          <input type="text" id="clientName" placeholder="Ej. María López García" required>
+        </div>
+
+        <div class="form-field">
+          <label>📱 Número de teléfono / WhatsApp</label>
+          <input type="tel" id="clientPhone" placeholder="Ej. 999 888 777" required>
+        </div>
+
+        <div class="form-field">
+          <label>📍 Distrito / Ciudad de envío</label>
+          <input type="text" id="clientLocation" placeholder="Ej. Miraflores, Lima" required>
+        </div>
+
+        <div class="form-field">
+          <label>🏠 Dirección completa (opcional)</label>
+          <textarea id="clientAddress" placeholder="Ej. Jr. Las Flores 123, Dpto 4B"></textarea>
+        </div>
+
+        <button class="submit-order-btn" id="submitOrderBtn" onclick="submitOrder()">
+          ✅ Confirmar pedido
+        </button>
+
+        <p style="font-size:0.72rem; color:var(--muted); text-align:center;">
+          Al confirmar, recibirás una respuesta por WhatsApp o llamada a la brevedad.
+        </p>
+      </div>
+    </div>
+
+    <!-- Pantalla de éxito -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon-big">✓</div>
+      <h3>¡Pedido recibido!</h3>
+      <p>Gracias por tu compra. En breve nos comunicaremos contigo para coordinar el envío. 🚀</p>
+      <button class="success-close-btn" onclick="closeAfterSuccess()">Volver a la tienda</button>
+    </div>
+
   </div>
 </div>
 
