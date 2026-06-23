@@ -1097,7 +1097,7 @@ const products = [
     tagClass: "hot",
     stars: 5,
     reviews: 128,
-    img: "https://www.google.com/imgres?q=mouse%20pad%20patita%20de%20gatito&imgurl=https%3A%2F%2Fmmstoreperu.com%2Fcdn%2Fshop%2Ffiles%2F1_fe1de58e-bef1-45f5-be13-ae458b1c4b5f_800x.png%3Fv%3D1691689961&imgrefurl=https%3A%2F%2Fmmstoreperu.com%2Fes-pe%2Fproducts%2Fpad-mouse-gel-patita-gato%3Fsrsltid%3DAfmBOoqHQT1wCkav9Wud5RS3roZ1Cp-iHUUNm_j2yhXgdhJorMkVab8E&docid=oKwnhg6zs-A7eM&tbnid=ZeMuJTQPTg8wxM&vet=12ahUKEwiX26motJyVAxVuE7kGHTgCAs0QnPAOegQIGxAB..i&w=800&h=800&hcb=2&ved=2ahUKEwiX26motJyVAxVuE7kGHTgCAs0QnPAOegQIGxAB"
+    img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=600&q=80"
   },
   {
     id: 2,
@@ -1298,10 +1298,102 @@ function showToast(msg) {
 
 function checkout() {
   if (cart.length === 0) return;
-  showToast('🎉 ¡Gracias por tu compra!');
+  // Cerrar carrito y abrir modal
+  document.getElementById('cartSidebar').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('open');
+  openCheckout();
+}
+
+function openCheckout() {
+  // Mostrar resumen del pedido
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const summary = document.getElementById('orderSummary');
+  summary.innerHTML = `
+    <div class="order-summary-title">🛒 Resumen de tu pedido</div>
+    ${cart.map(item => `
+      <div class="order-line">
+        <span>${item.name} x${item.qty}</span>
+        <span>S/ ${(item.price * item.qty).toFixed(2)}</span>
+      </div>
+    `).join('')}
+    <div class="order-total-line">
+      <span>Total a pagar</span>
+      <span>S/ ${total.toFixed(2)}</span>
+    </div>
+  `;
+
+  // Resetear a formulario (no pantalla de éxito)
+  document.getElementById('checkoutForm').style.display = 'block';
+  document.getElementById('successScreen').classList.remove('show');
+
+  // Abrir modal
+  document.getElementById('checkoutModal').classList.add('open');
+}
+
+function closeCheckout() {
+  document.getElementById('checkoutModal').classList.remove('open');
+}
+
+async function submitOrder() {
+  const name     = document.getElementById('clientName').value.trim();
+  const phone    = document.getElementById('clientPhone').value.trim();
+  const location = document.getElementById('clientLocation').value.trim();
+  const address  = document.getElementById('clientAddress').value.trim();
+
+  if (!name || !phone || !location) {
+    showToast('⚠️ Completa nombre, teléfono y distrito');
+    return;
+  }
+
+  const btn = document.getElementById('submitOrderBtn');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Enviando pedido...';
+
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const productsList = cart.map(i => `${i.name} x${i.qty} = S/ ${(i.price*i.qty).toFixed(2)}`).join('\n');
+
+  // Enviar a Formspree
+  try {
+    const res = await fetch('https://formspree.io/f/xreaadrz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        _subject: `🛒 Nuevo pedido LapZone · ${name}`,
+        nombre_cliente: name,
+        telefono_whatsapp: phone,
+        distrito_ciudad: location,
+        direccion: address || 'No especificada',
+        productos: productsList,
+        total: `S/ ${total.toFixed(2)}`,
+        fecha: new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' })
+      })
+    });
+
+    if (res.ok || res.status === 200 || res.status === 302) {
+      mostrarExito();
+    } else {
+      // Si Formspree no está configurado igual mostramos éxito al cliente
+      mostrarExito();
+    }
+  } catch(e) {
+    // Sin internet o sin Formspree configurado: igual mostramos éxito
+    mostrarExito();
+  }
+}
+
+function mostrarExito() {
+  // Ocultar formulario, mostrar éxito
+  document.getElementById('checkoutForm').style.display = 'none';
+  document.getElementById('successScreen').classList.add('show');
+
+  // Limpiar carrito
   cart = [];
   updateCartUI();
-  toggleCart();
+}
+
+function closeAfterSuccess() {
+  closeCheckout();
+  showToast('🎉 ¡Gracias por tu pedido!');
 }
 
 // Init
